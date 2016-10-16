@@ -7,6 +7,14 @@ TEST(TBitField, can_create_bitfield_with_positive_length)
   ASSERT_NO_THROW(TBitField bf(3));
 }
 
+TEST(TBitfield, double_clear_bit)
+{
+	int bitIdx = 7;
+	TBitField bf(9);
+	bf.ClrBit(bitIdx);
+	bf.ClrBit(bitIdx);
+	EXPECT_EQ(0, bf.GetBit(bitIdx));
+}
 TEST(TBitField, can_get_length)
 {
   TBitField bf(3);

@@ -10,6 +10,21 @@ TEST(TSet, can_get_max_power_set)
   EXPECT_EQ(size, set.GetMaxPower());
 }
 
+TEST(TSet, can_plus_four_sets_in_one_line)
+{
+	const int size = 7;
+	TSet s1(size), s2(size), s3(size), s4(size),s5(size), s0(size);
+	for (int i = 0; i < size; i++) s0.InsElem(i);	//1111111
+	s1.InsElem(1);
+	s1.InsElem(3);									//0101000
+	s2.InsElem(0);
+	s2.InsElem(2);									//1010000
+	s3.InsElem(4);
+	s3.InsElem(5);									//0000110
+	s4.InsElem(6);									//0000001
+	s5 = s1 + s2 + s3 + s4;							//1111111
+	for (int i = 0; i < size; i++)	EXPECT_EQ(s0.IsMember(i), s5.IsMember(i));
+}
 TEST(TSet, can_insert_non_existing_element)
 {
   const int size = 5, k = 3;
