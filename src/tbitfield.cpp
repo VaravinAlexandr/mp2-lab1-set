@@ -49,7 +49,7 @@ int TBitField::GetMemIndex(const int n) const // индекс Мем для би
 TELEM TBitField::GetMemMask(const int n) const // битовая маска для бита n
 {
 	TELEM temp=1;
-	return temp<<(n%32);
+	return temp<<(n%31);
 }
 
 // доступ к битам битового поля
@@ -84,7 +84,7 @@ int TBitField::GetBit(const int n) const // получить значение б
 	if ((n>=0)&&(n<BitLen))
  	{
  		int i=GetMemIndex(n);
- 		return (pMem[i]&GetMemMask(n))>>(n%32);
+ 		return (pMem[i]&GetMemMask(n));
  	}
     else throw "wrong_index";
     return 0;
@@ -116,53 +116,22 @@ TBitField& TBitField::operator=(const TBitField &bf) // присваивание
 
 int TBitField::operator==(const TBitField &bf) const // сравнение
 {
-    TELEM MemMask=0xffffffff;
-	int res = 1;
-	if ( BitLen != bf.BitLen ) 
+	
+	if ( BitLen == bf.BitLen ) 
 	{
-		res = 0;
-	}
-	else
-	{
-		for ( int i=0; i < MemLen-1; i++ )
+		for (int i=0; i <MemLen;i++)
 		{
-			if ((pMem[i]&MemMask) !=(bf.pMem[i]&MemMask)) 
-			{ 
-				res = 0;
-				break; 
-			}
+			if (pMem[i]!=bf.pMem[i]) return 0;
 		}
+		return 1;
 	}
-        for ( int i=MemLen-1; i<MemLen;i++)
-		{
-            if (GetBit(i)!=bf.GetBit(i))
-            {
-				res = 0;
-				break; 
-			}
-		}
-	return res;
+	else return 0;
 }
 
 int TBitField::operator!=(const TBitField &bf) const // сравнение
 {
-	int res = 0;
-	if ( BitLen != bf.BitLen )
-	{
-		res = 1;
-	}
-	else
-	{
-		for ( int i=0; i < MemLen; i++ )
-		{
-			if ( pMem[i] != bf.pMem[i] ) 
-			{
-				res = 1;
-				break; 
-			}
-		}
-	}
-	return res;
+	
+	return !(bf==*this);
 }
 
 TBitField TBitField::operator|(const TBitField &bf) // операция "или"
@@ -205,12 +174,17 @@ TBitField TBitField::operator&(const TBitField &bf) // операция "и"
 
 TBitField TBitField::operator~(void) // отрицание
 {
-	TBitField temp(BitLen);
-	for(int i=0;i<MemLen;i++)
-	{
-		temp.pMem[i]=~pMem[i];
-	}
-	return temp;
+	TBitField temp = *this; 
+ 	for (int i=0;i<BitLen;i++) 
+	{ 
+ 		if (temp.GetBit(i)) 
+ 			temp.ClrBit(i); 
+ 		else 
+ 			temp.SetBit(i); 
+ 	} 
+ 	 
+ 	return temp; 
+
 }
 
 // ввод/вывод
